@@ -1,7 +1,7 @@
 import supertest from "supertest";
 
 import config from "../config/config";
-const { faker } = require('@faker-js/faker');
+//const { faker } = require('@faker-js/faker');
 const { url } = config
 
 // контроллер user
@@ -26,10 +26,6 @@ const user = {
             .get(`/Account/v1/User/${uuid}`)
             .set('Accept', 'application/json')
             .send()
-    },
-
-    randomUserName() {
-        return `${faker.person.lastName()}-${faker.person.firstName()}`;
     }
 }
 

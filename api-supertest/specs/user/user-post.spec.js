@@ -1,6 +1,7 @@
 import supertest from "supertest";
 import config from "../../framework/config/config";
 import user from "../../framework/services/user";
+import fixtures from "../../framework/services/fixtures";
 
 describe('User', () => {
   describe('POST /Account/v1/User', () => {
@@ -13,7 +14,7 @@ describe('User', () => {
     })
 
     test('Создание нового пользователя парой userName и password', async () => {
-      const res = await user.create({ "userName" : user.randomUserName(), "password": `${config.defaultPassword}` })
+      const res = await user.create({ "userName" : fixtures.randomUserName(), "password": `${config.defaultPassword}` })
 
       expect(res.status).toEqual(201);
       expect(typeof res.body.userID).toEqual('string')
@@ -21,7 +22,7 @@ describe('User', () => {
     })
 
     test('Создание пользователя с уже созданной парой с userName и password', async () => {
-      const payload = { "userName" : user.randomUserName(), "password": `${config.defaultPassword}` }
+      const payload = { "userName" : fixtures.randomUserName(), "password": `${config.defaultPassword}` }
 
       // шаг с созданием дубликата-юзера до
       await user.create(payload)

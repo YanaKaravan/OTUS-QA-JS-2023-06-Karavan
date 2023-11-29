@@ -1,6 +1,7 @@
 import supertest from "supertest";
 import config from "../../framework/config/config";
 import user from "../../framework/services/user";
+import fixtures from "../../framework/services/fixtures";
 
 describe('User', () => {
     describe('DELETE /Account/v1/User/{UUID}', () => {
@@ -13,7 +14,7 @@ describe('User', () => {
         })
 
         test('Удаление неавторизованного пользователя по uuid', async () => {
-            const createRes = await user.create({ "userName" : user.randomUserName(), "password": `${config.defaultPassword}` })
+            const createRes = await user.create({ "userName" : fixtures.randomUserName(), "password": `${config.defaultPassword}` })
 
             const deleteRes = await user.delete(createRes.body.userID)
 

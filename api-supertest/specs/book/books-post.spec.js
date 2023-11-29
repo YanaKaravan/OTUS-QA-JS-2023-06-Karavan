@@ -2,6 +2,7 @@ import supertest from "supertest";
 import config from "../../framework/config/config";
 import books from "../../framework/services/books";
 import user from "../../framework/services/user";
+import fixtures from "../../framework/services/fixtures";
 
 describe('Books', () => {
     describe('POST /BookStore/v1/Books', () => {
@@ -14,7 +15,7 @@ describe('Books', () => {
         })
 
         test(`Добавление книги с isbn = ${config.isbn_1} к неавторизованному пользователю`, async () => {
-            const resCreatedUser = await user.create({ "userName": user.randomUserName(), "password": `${config.defaultPassword}`})
+            const resCreatedUser = await user.create({ "userName": fixtures.randomUserName(), "password": `${config.defaultPassword}`})
 
             console.log(resCreatedUser.body.userID)
 

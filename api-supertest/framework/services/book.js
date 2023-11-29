@@ -26,10 +26,6 @@ const book = {
             .get(`/BookStore/v1/Book?ISBN=${isbn}`)
             .set('Accept', 'application/json')
             .send()
-    },
-
-    randomISBN() {
-        return faker.commerce.isbn({ variant : 13, separator:""});
     }
 }
 
