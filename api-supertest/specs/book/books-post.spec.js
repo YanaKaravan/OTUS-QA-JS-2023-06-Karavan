@@ -14,10 +14,26 @@ describe('Books', () => {
             expect(res.status).not.toEqual(404);
         })
 
-        test(`Добавление книги с isbn = ${config.isbn_1} к неавторизованному пользователю`, async () => {
-            const resCreatedUser = await user.create({ "userName": fixtures.randomUserName(), "password": `${config.defaultPassword}`})
+        test(`Добавление книги с isbn = ${config.isbn_1} авторизованным пользователем`, async () => {
+            const { userId, token } = await user.createRandomAndAuth()
 
-            console.log(resCreatedUser.body.userID)
+            const resBooks = await books.createByISBN(
+                {
+                    "userId": userId,
+                    "collectionOfIsbns": [
+                        {
+                            "isbn": config.isbn_1
+                        }
+                    ]
+                },
+                token
+            )
+
+            expect(resBooks.status).toEqual(201);
+        })
+
+        test(`Добавление книги с isbn = ${config.isbn_1} неавторизованным пользователем`, async () => {
+            const resCreatedUser = await user.create({ "userName": fixtures.randomUserName(), "password": `${config.defaultPassword}`})
 
             const resBooks = await books.createByISBN(
                 {
@@ -27,7 +43,8 @@ describe('Books', () => {
                             "isbn": config.isbn_1
                         }
                     ]
-                }
+                },
+                'wrongToken'
             )
 
             expect(resBooks.status).toEqual(401);

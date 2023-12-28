@@ -6,21 +6,17 @@ import fixtures from "../../framework/services/fixtures";
 describe('User', () => {
     describe('GET /Account/v1/User/{UUID}', () => {
         test('Метод должен существовать', async () => {
-            const res = await supertest(config.url)
-                .get('/Account/v1/User/')
-                .send({})
+            const res = await user.get(0, 'wrongToken')
 
-            expect(res.status).not.toEqual(404);
+            expect(res.status).not.toEqual(404)
         })
 
-        test('Получение неавторизованного пользователя по uuid', async () => {
-            const createRes = await user.create({ "userName" : fixtures.randomUserName(), "password": `${config.defaultPassword}` })
+        test('Получение существующего пользователя', async () => {
+            const { userId, token } = await user.createRandomAndAuth()
+            const getRes = await user.get(userId, token)
 
-            const getRes = await user.get(createRes.body.userID)
-
-            expect(getRes.status).toEqual(401);
-            expect(getRes.body.code).toEqual('1200')
-            expect(getRes.body.message).toEqual('User not authorized!')
+            expect(getRes.status).toEqual(200)
+            expect(getRes.body.userId).toEqual(userId)
         })
     })
 })

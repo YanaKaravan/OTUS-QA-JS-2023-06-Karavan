@@ -1,12 +1,13 @@
 import supertest from "supertest";
 
 import config from "../config/config";
-//const { faker } = require('@faker-js/faker');
+import fixtures from "../../framework/services/fixtures";
+
 const { url } = config
 
 // контроллер user
 const user = {
-    // Функция авторизации
+    
     create: (payload) => {
         return supertest(url)
             .post('/Account/v1/User')
@@ -14,18 +15,40 @@ const user = {
             .send(payload)
     },
 
-    delete: (uuid) => {
+    getToken: (payload) => {
+        return supertest(url)
+            .post('/Account/v1/GenerateToken')
+            .set('Accept', 'application/json')
+            .send(payload)
+    },
+
+    delete: (uuid, token) => {
         return supertest(url)
             .delete(`/Account/v1/User/${uuid}`)
             .set('Accept', 'application/json')
+            .set('Authorization', 'Bearer ' + token)
             .send()
     },
 
-    get: (uuid) => {
+    get: (uuid, token) => {
         return supertest(url)
             .get(`/Account/v1/User/${uuid}`)
             .set('Accept', 'application/json')
+            .set('Authorization', 'Bearer ' + token)
             .send()
+    },
+
+    createRandomAndAuth: async () => {
+        const userName = fixtures.randomUserName()
+        const password = config.defaultPassword
+        const resCreatedUser = await user.create({ userName: userName, password: password })
+        
+        const userId = resCreatedUser.body.userID
+        const tokenRes = await user.getToken({ userName: userName, password: password })
+        
+        const token = tokenRes.body.token
+
+        return {userId: userId, token: token}
     }
 }
 

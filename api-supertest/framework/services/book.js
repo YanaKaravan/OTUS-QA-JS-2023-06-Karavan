@@ -4,20 +4,14 @@ import config from "../config/config";
 const { faker } = require('@faker-js/faker');
 const { url } = config
 
-// контроллер user
+
 const book = {
-    // Функция авторизации
-    delete: (payload) => {
+
+    delete: (payload, token) => {
         return supertest(url)
             .delete(`/BookStore/v1/Book`)
             .set('Accept', 'application/json')
-            .send(payload)
-    },
-
-    put: (payload) => {
-        return supertest(url)
-            .put(`/BookStore/v1/Book?ISBN=${isbn}`)
-            .set('Accept', 'application/json')
+            .set('Authorization', 'Bearer ' + token)
             .send(payload)
     },
 

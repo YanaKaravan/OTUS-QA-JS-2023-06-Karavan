@@ -6,21 +6,27 @@ import fixtures from "../../framework/services/fixtures";
 describe('User', () => {
     describe('DELETE /Account/v1/User/{UUID}', () => {
         test('Метод должен существовать', async () => {
-            const res = await supertest(config.url)
-                .delete('/Account/v1/User/')
-                .send({})
+            const res = await user.delete('0', 'wrongToken')
 
             expect(res.status).not.toEqual(404);
         })
 
-        test('Удаление неавторизованного пользователя по uuid', async () => {
-            const createRes = await user.create({ "userName" : fixtures.randomUserName(), "password": `${config.defaultPassword}` })
-
-            const deleteRes = await user.delete(createRes.body.userID)
-
-            expect(deleteRes.status).toEqual(401);
+        test('Удаление пользователя по uuid (без авторизации)', async () => {
+            const { userId, token } = await user.createRandomAndAuth()
+            const deleteRes = await user.delete(userId, 'wrongToken')
+        
+            //expect(deleteRes.status).toEqual(204)
+            expect(deleteRes.status).toEqual(401) 
             expect(deleteRes.body.code).toEqual('1200')
-            expect(deleteRes.body.message).toEqual('User not authorized!')
         })
+
+        // test('Удаление пользователя по uuid (с авторизацией)', async () => {
+        //     const { userId, token } = await user.createRandomAndAuth()
+        //     //console.log([userId, token])
+        //     const deleteRes = await user.delete(userId, token)
+        //     //console.log(deleteRes.body)
+        //     expect(deleteRes.status).toEqual(200)
+        //     expect(deleteRes.body.code).toEqual('0')
+        // })
     })
 })

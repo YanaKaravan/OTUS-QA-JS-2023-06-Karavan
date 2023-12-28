@@ -2,30 +2,40 @@ import supertest from "supertest";
 import config from "../../framework/config/config";
 import books from "../../framework/services/books";
 import user from "../../framework/services/user";
-import fixtures from "../../framework/services/fixtures";
 
 describe('Books', () => {
-    describe('DELETE /BookStore/v1/Books', () => {
+    describe('PUT /BookStore/v1/Books', () => {
         test('Метод должен существовать', async () => {
-            const res = await supertest(config.url)
-                .put(`/BookStore/v1/Books/${config.isbn_1}`)
-                .send({})
+            const res = await books.updateByISBN('', {}, 'wrongToken')
 
             expect(res.status).not.toEqual(404);
         })
 
-        test('Метод должен существовать', async () => {
-            const resCreatedUser = await user.create({ "userName": fixtures.randomUserName(), "password": `${config.defaultPassword}`})
-
-            console.log(resCreatedUser.body.userID)
-
-            const resBooks = await books.updateByISBN(config.isbn_1,
+        test('Обновление книги по ISBN', async () => {
+            const { userId, token } = await user.createRandomAndAuth()
+            const createResponse = await books.createByISBN(
                 {
-                    "userId": resCreatedUser.body.userID,
-                    "isbn": config.isbn_1
-                })
+                    "userId": userId,
+                    "collectionOfIsbns": [
+                        {
+                            "isbn": config.isbn_1
+                        }
+                    ]
+                }, 
+                token
+            )
+            expect(createResponse.status).toEqual(201)
 
-            expect(resBooks.status).toEqual(401);
+            const updateResponse = await books.updateByISBN(
+                config.isbn_1,
+                {
+                    "userId": userId,
+                    "isbn": config.isbn_2
+                },
+                token
+            )
+            
+            expect(updateResponse.status).toEqual(200)
         })
     })
 })

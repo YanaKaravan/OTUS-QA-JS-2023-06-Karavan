@@ -6,9 +6,7 @@ import fixtures from "../../framework/services/fixtures";
 describe('User', () => {
   describe('POST /Account/v1/User', () => {
     test('Метод должен существовать', async () => {
-      const res = await supertest(config.url)
-          .post('/Account/v1/User')
-          .send({})
+      const res = await user.create({})
 
       expect(res.status).not.toEqual(404);
     })
@@ -24,7 +22,6 @@ describe('User', () => {
     test('Создание пользователя с уже созданной парой с userName и password', async () => {
       const payload = { "userName" : fixtures.randomUserName(), "password": `${config.defaultPassword}` }
 
-      // шаг с созданием дубликата-юзера до
       await user.create(payload)
 
       const res = await user.create(payload)
