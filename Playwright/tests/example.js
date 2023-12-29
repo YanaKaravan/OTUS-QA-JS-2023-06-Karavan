@@ -1,5 +1,5 @@
 // @ts-check
-consol.log('OTUS');
+// consol.log('OTUS');
 
 const { test, expect } = require('@playwright/test');
 
