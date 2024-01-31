@@ -16,10 +16,10 @@ class LoginPage {
         await this._loginBtn.click();
     };
 
-    async testLogin() {
+    async login(user) {
         await this.page.goto('https://tender.realdb.ru/account/tenders');
         await this.page.waitForTimeout(2000)
-        await this.fillLoginForm('wasose1787@jybra.com', '123456789Wa-');
+        await this.fillLoginForm(user.login, user.password);
         await this.clickLoginBtn();
         await this.page.waitForTimeout(1000)
     };
